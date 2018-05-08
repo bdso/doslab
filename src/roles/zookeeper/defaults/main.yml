@@ -1,0 +1,32 @@
+---
+# Defaults file for src/roles/zookeeper.
+zookeeper_version: 3.4.12
+zookeeper_package_version: zookeeper-{{ zookeeper_version }}
+# zookeeper_url: http://www.us.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz
+# zookeeper_url: http://mirrors.viethosting.com/apache/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz
+zookeeper_url: http://mirrors.viethosting.com/apache/zookeeper/{{ zookeeper_package_version }}/{{ zookeeper_package_version }}.tar.gz
+install_dir: /opt/src
+checksum_sha1: sha1:8e2cc8784794e24df90fa1a9dbe6cd1695c79a44
+checksum_md5: md5:f43cca610c2e041c71ec7687cddbd0c
+zookeeper_dir: '{{ install_dir }}/{{ zookeeper_package_version }}'
+zookeeper_data_prefix: '{{ zookeeper_dir }}'
+
+# Config zoo.cfg
+tick_time: 2000
+init_limit: 10
+sync_limit: 5
+data_dir: '{{ zookeeper_data_prefix }}/data'
+data_log_dir: '{{ zookeeper_data_prefix }}/logs'
+client_port: 2181
+max_client_cnxns: 60
+auto_purge_snap_retain_count: 3
+auto_purge_purge_interval: 1
+install_modes_list: ["standalone","cluster"]
+
+# Installation mode: only two modes
+#   standalone (default value)
+#   cluster
+install_mode: standalone
+zookeeper_id: 1
+zookeeper_leader_port: 2888
+zookeeper_election_port: 3888

@@ -1,0 +1,4 @@
+---
+- import_tasks: dep.yml
+- import_tasks: ins.yml
+- import_tasks: conf.yml

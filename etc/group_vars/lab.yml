@@ -1,0 +1,3 @@
+groupname: lab
+hostname: lab
+ansible_user: centos

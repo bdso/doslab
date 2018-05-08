@@ -1,0 +1,7 @@
+---
+- hosts: lab
+  # vars:
+    # install_mode: "cluster"
+  become: yes
+  roles:
+    - zookeeper

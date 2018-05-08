@@ -1,0 +1,39 @@
+# The number of milliseconds of each tick
+tickTime={{ tick_time }}
+# The number of ticks that the initial
+# synchronization phase can take
+initLimit={{ init_limit }}
+# The number of ticks that can pass between
+# sending a request and getting an acknowledgement
+syncLimit={{ sync_limit }}
+# the directory where the snapshot is stored.
+# do not use /tmp for storage, /tmp here is just
+# example sakes.
+dataDir={{ data_dir }}
+# Directory to write the transaction log to the dataLogDir rather than the dataDir.
+# This allows a dedicated log device to be used, and helps avoid competition between logging and snaphots.
+dataLogDir={{ data_log_dir }}
+# the port at which the clients will connect
+clientPort={{ client_port }}
+# the maximum number of client connections.
+# increase this if you need to handle more clients
+maxClientCnxns={{ max_client_cnxns }}
+#
+# Be sure to read the maintenance section of the
+# administrator guide before turning on autopurge.
+#
+# http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance
+#
+# The number of snapshots to retain in dataDir
+autopurge.snapRetainCount={{ auto_purge_snap_retain_count }}
+# Purge task interval in hours
+# Set to "0" to disable auto purge feature
+autopurge.purgeInterval={{ auto_purge_purge_interval }}
+
+{% if install_mode == "standalone" %}
+server.{{ zookeeper_id }}={{ inventory_hostname }}:{{ zookeeper_leader_port }}:{{ zookeeper_election_port }}
+{% elif install_mode == "cluster" %}
+{% for server in play_hosts %}
+server.{{ loop.index }}={{ server }}:{{ zookeeper_leader_port }}:{{ zookeeper_election_port }}
+{% endfor %}
+{% endif %}

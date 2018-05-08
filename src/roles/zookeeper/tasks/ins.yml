@@ -1,0 +1,32 @@
+---
+- file: path={{ install_dir }} state=directory
+- name: Download Apache ZooKeeper with check (sha1 or md5).
+  get_url:
+    url: '{{ zookeeper_url }}'
+    dest: '{{ install_dir }}'
+    checksum: '{{ checksum_sha1 }}'
+  tags:
+    - zookeeper_download
+- name: Unpack Apache ZooKeeper.
+  unarchive:
+    src: '{{ zookeeper_dir }}.tar.gz'
+    dest: '{{ install_dir }}'
+    copy: no
+  tags:
+    - zookeeper_unpack
+- name: Create Apache ZooKeeper data folder.
+  file: path={{ data_dir }} state=directory
+- name: Create Apache Zookeeper logs folder.
+  file: path={{ data_log_dir }} state=directory
+- name: Write myid file.
+  template:
+    src: myid.j2
+    dest: '{{ data_dir }}/myid'
+  tags:
+    - zookeeper_deploy    
+- name: Configure Apache Zookeeper.
+  template: 
+    src: zoo.cfg.j2
+    dest: '{{ zookeeper_dir }}/conf/zoo.cfg'
+  tags:
+    - zookeeper_deploy
