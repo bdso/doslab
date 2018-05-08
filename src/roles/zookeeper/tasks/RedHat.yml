@@ -1,0 +1,116 @@
+---
+- file: path={{ install_dir }} state=directory
+- name: Create zookeeper group
+  group:
+    name: '{{ zookeeper_group }}'
+    system: yes
+  tags:
+    - zookeeper_group
+- name: Create zookeeper user
+  user:
+    name: '{{ zookeeper_user }}'
+    group: '{{ zookeeper_group }}'
+    system: yes
+    create_home: no
+  tags:
+    - zookeeper_user
+
+# - name: Remove zookeeper user
+#   user:
+#     name: '{{ zookeeper_user }}'
+#     state: absent
+#   tags:
+#     - remove_zookeeper_user
+# - name: Remove zookeeper group.
+#   group:
+#     name: '{{ zookeeper_group }}'
+#     state: absent
+#   tags:
+#     - remove_zookeeper_group
+
+- name: Download Apache ZooKeeper with check (sha1 or md5)
+  get_url:
+    url: '{{ zookeeper_url }}'
+    dest: '{{ install_dir }}'
+    checksum: '{{ checksum_sha1 }}'
+  tags:
+    - zookeeper_download
+
+- name: Unpack Apache ZooKeeper
+  unarchive:
+    src: '{{ zookeeper_dir }}.tar.gz'
+    dest: '{{ install_dir }}'
+    copy: no
+  tags:
+    - zookeeper_unpack
+
+- name: Export Apache Zookeeper
+  template:
+    src: zk.sh.j2
+    dest: '{{ export_dir }}/zk.sh'
+  tags:
+    - zookeeper_export
+
+- name: Create Apache ZooKeeper data folder
+  file: path={{ data_dir }} state=directory
+  tags:
+    - zookeeper_dir
+- name: Create Apache Zookeeper logs folder
+  file: path={{ data_log_dir }} state=directory
+  tags:
+    - zookeeper_dir
+
+- name: Write myid file
+  template:
+    src: myid.j2
+    dest: '{{ data_dir }}/myid'
+  tags:
+    - zookeeper_config
+  notify:
+    - Restart zookeeper
+
+- name: Configure Apache Zookeeper
+  template: 
+    src: zoo.cfg.j2
+    dest: '{{ zookeeper_dir }}/conf/zoo.cfg'
+  tags:
+    - zookeeper_config
+  notify:
+    - Restart zookeeper 
+- name: Systemd script
+  template:
+    src: zookeeper.service.j2
+    dest: '{{ systemd_dir }}/zookeeper.service'
+  tags:
+    - zookeeper_systemd
+  notify:
+    - Reload systemd
+    - Restart zookeeper
+
+- name: Start the Apache Zookeeper service
+  service:
+    name: zookeeper
+    state: started
+    enabled: yes
+  tags:
+    - zookeeper_service
+
+# Cleanup install by deleting downloaded ZooKeeper archive
+- name: Delete Apache Zookeeper tar.gz file
+  file:
+    path: '{{ zookeeper_dir }}.tar.gz'
+    state: absent
+  tags:
+    - zookeeper_cleanup
+
+# Set Ansible fact that ZooKeeper has completed installation. This is so that this role can be used in
+# other dependent roles. Those roles can check for this fact to determine whether or not this role
+# should be run. Failing to do so will mean that this role is executed even if it has already been run.
+- name: Set fact Apache Zookeeper installed
+  set_fact:
+    zookeeper_installed: true
+  tags:
+    - zookeeper_install_fact
+
+- include: ops.yml
+  when: operation

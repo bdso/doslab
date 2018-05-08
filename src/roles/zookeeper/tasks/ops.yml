@@ -1,0 +1,42 @@
+---
+# Operation System
+- name: Start Apache Zookeeper
+  service:
+    name: zookeeper
+    state: started
+  when: operation
+  tags:
+    - zookeeper_service_start
+
+- name: Stop Apache Zookeeper
+  service:
+    name: zookeeper
+    state: stopped 
+  when: operation
+  tags:
+    - zookeeper_service_stop
+
+- name: Restart Apache Zookeeper
+  service:
+    name: zookeeper
+    state: restarted 
+  when: operation
+  tags:
+    - zookeeper_service_restart
+
+##  Mode status   
+- name: Register mode status of Apache Zookeeper
+  command: '{{ zookeeper_dir }}/bin/zkServer.sh status'
+  register: result
+  tags:
+    - zookeeper_status
+- name: STDOUT mode status of Apache Zookeeper
+  debug:
+    msg: '{{ result.stdout }}'
+  tags:
+    - zookeeper_status
+- name: STDERR mode status of Apache Zookeeper
+  debug:
+    msg: '{{ result.stderr }}'
+  tags:
+    - zookeeper_status

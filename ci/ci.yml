@@ -1,7 +1,13 @@
+# ansible-playbook ci/ci.yml -vv
+# ansible-playbook ci/ci.yml --tags "zookeeper_config,zookeeper_service_start"
+# ansible-playbook ci/ci.yml --skip-tags "zookeeper_config"
+
 ---
 - hosts: lab
-  # vars:
+# - hosts: dev
+  vars:
     # install_mode: "cluster"
+    operation: true
   become: yes
   roles:
     - zookeeper

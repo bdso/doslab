@@ -1,2 +1,28 @@
 ---
-# handlers file for src/roles/zookeeper
+- name: Reload systemd
+  command: systemctl daemon-reload
+
+- name: Start zookeeper
+  service:
+    name: zookeeper
+    state: started
+
+- name: Stop zookeeper
+  service:
+    name: zookeeper
+    state: stopped
+
+- name: Restart zookeeper
+  service: 
+    name: zookeeper
+    state: restarted
+
+- name: Reload zookeeper
+  service:
+    name: zookeeper
+    state: reloaded
+
+- name: Enable zookeeper
+  service:
+    name: zookeeper
+    enabled: yes

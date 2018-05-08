@@ -1,17 +1,23 @@
 ---
+# Defaults dir for roles
+install_dir: /opt/src
+export_dir: /etc/profile.d
+systemd_dir: /usr/lib/systemd/system
+
 # Defaults file for src/roles/zookeeper.
 zookeeper_version: 3.4.12
+zookeeper_group: zookeeper
+zookeeper_user: zookeeper
 zookeeper_package_version: zookeeper-{{ zookeeper_version }}
 # zookeeper_url: http://www.us.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz
 # zookeeper_url: http://mirrors.viethosting.com/apache/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz
 zookeeper_url: http://mirrors.viethosting.com/apache/zookeeper/{{ zookeeper_package_version }}/{{ zookeeper_package_version }}.tar.gz
-install_dir: /opt/src
 checksum_sha1: sha1:8e2cc8784794e24df90fa1a9dbe6cd1695c79a44
 checksum_md5: md5:f43cca610c2e041c71ec7687cddbd0c
 zookeeper_dir: '{{ install_dir }}/{{ zookeeper_package_version }}'
 zookeeper_data_prefix: '{{ zookeeper_dir }}'
 
-# Config zoo.cfg
+# Config zookeeper(file zoo.cfg)
 tick_time: 2000
 init_limit: 10
 sync_limit: 5
@@ -26,6 +32,7 @@ install_modes_list: ["standalone","cluster"]
 # Installation mode: only two modes
 #   standalone (default value)
 #   cluster
+operation: false
 install_mode: standalone
 zookeeper_id: 1
 zookeeper_leader_port: 2888
